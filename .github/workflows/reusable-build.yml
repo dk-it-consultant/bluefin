@@ -4,7 +4,8 @@ on:
     inputs:
       image_flavors:
         description: "JSON string of flavors to build, '[main, nvidia, hwe, hwe-nvidia]'"
-        default: "['main', 'nvidia', 'nvidia-open']"
+        # default: "['main', 'nvidia', 'nvidia-open']"
+        default: "['main']"
         type: string
       brand_name:
         description: "The Brand Name: bluefin"
@@ -230,14 +231,14 @@ jobs:
         env:
           TAGS: ${{ steps.push.outputs.outputs && fromJSON(steps.push.outputs.outputs).digest }}
           COSIGN_EXPERIMENTAL: false
-          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
 
       - name: Add SBOM Attestation
         if: false
         env:
           IMAGE: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
           DIGEST: ${{ steps.push.outputs.outputs && fromJSON(steps.push.outputs.outputs).digest }}
-          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
           SBOM_OUTPUT: ${{ steps.generate-sbom.outputs.OUTPUT_PATH }}
         run: |
           cd "$(dirname "$SBOM_OUTPUT")"
